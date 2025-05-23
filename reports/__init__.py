@@ -1,8 +1,8 @@
-from reports.payout_report import generate_payout_report_to_cmd
+from reports.payout_report import PayoutReport
 
 
 REPORT_TYPES = {
-    "payout": generate_payout_report_to_cmd,
+    "payout": PayoutReport,
 }
 
 

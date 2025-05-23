@@ -1,29 +1,25 @@
-import argparse
-from typing import Callable
-
 from reports import get_report
-from parsers.csv_parser import parse_csv_files
+from parsers.csv_parser import CSVParser
+from utils.get_args import get_args
 
 
-def main_func() -> str:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input_files", nargs="+", type=str, help="input files")
-    parser.add_argument("--report", required=True, help="report type")
-    args = parser.parse_args()
+def main_func():
+    args = get_args()
+    report_type: str = args.get("report_type")
+    input_files: list[str] = args.get("input_files")
+    report_class = get_report(report_type)
+    csv_parser = CSVParser()
 
-    report_type: str = args.report.lower()
-    report_func: Callable | None = get_report(report_type)
-
-    if report_func is None:
+    if report_class is None:
         raise ValueError(f"Invalid report type: {report_type}")
 
     try:
-        data: list[dict] = parse_csv_files(args.input_files)
+        data: list[dict] = csv_parser.parse_csv_files(input_files)
     except Exception as e:
         raise ValueError(f"Error while parsing CSV files: {e}")
 
     try:
-        report: str = report_func(data)
+        report = report_class(data)
     except Exception as e:
         raise ValueError(f"Error while generating report: {e}")
 
@@ -31,8 +27,11 @@ def main_func() -> str:
 
 
 def main():
-    report: str = main_func()
+    report = main_func()
     print(report)
+
+    json_output = report.json
+    return json_output
 
 
 if __name__ == "__main__":  # pragma: no cover

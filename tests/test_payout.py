@@ -5,12 +5,12 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from reports.payout_report import generate_payout_report_to_cmd
+from reports.payout_report import generate_payout_report
 from reports import get_report
 
 
 def test_get_report():
-    assert get_report("payout") is generate_payout_report_to_cmd
+    assert get_report("payout") is generate_payout_report
 
 
 def test_invalid_report_type():
@@ -45,7 +45,7 @@ def test_generate_payout_report_to_cmd():
         },
     ]
 
-    result = generate_payout_report_to_cmd(data)
+    result = generate_payout_report(data)
 
     assert "HR" in result
     assert "Grace Lee" in result
