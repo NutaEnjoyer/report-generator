@@ -11,9 +11,5 @@ class BaseReport(ABC):
             return self.report_json
 
     @abstractmethod
-    def __str__(self) -> str:
-        pass  # pragma: no cover
-
-    @abstractmethod
     def generate_report(self) -> str:
         pass  # pragma: no cover
