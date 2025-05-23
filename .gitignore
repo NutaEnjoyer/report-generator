@@ -1,5 +1,10 @@
-__pycache__
+__pycache__/
 *.pyc
+
+.pytest_cache/
+.coverage
+
+venv/
 
 data1.csv
 data2.csv

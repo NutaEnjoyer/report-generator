@@ -3,7 +3,7 @@ from collections import defaultdict
 
 def generate_payout_report_to_cmd(data: list[dict]) -> str:
     departments = defaultdict(list)
-    lines: list[str] = []
+    lines: list[str] = []  # list of strings to be returned
 
     for person in data:
         payout: int = int(person['rate']) * int(person['hours_worked'])
@@ -12,7 +12,8 @@ def generate_payout_report_to_cmd(data: list[dict]) -> str:
     
     lines.append(f"{'':<16} {'name':<20} {'hours':<6} {'rate':<5} {'payout'}")
 
-    for department, people in departments.items():
+    # group by department
+    for department, people in departments.items(): 
         lines.append(department)
         total = 0
         total_hours = 0
