@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from parsers.csv_parser import parse_csv_files
+from parsers.csv_parser import CSVParser
 
 
 @pytest.fixture
@@ -27,12 +27,16 @@ def csv_files(tmp_path):
 
 
 def test_parse_csv_files_row_count(csv_files):
-    result = parse_csv_files(csv_files)
+    csv_parser = CSVParser()
+
+    result = csv_parser.parse_csv_files(csv_files)
     assert len(result) == 5
 
 
 def test_parse_csv_files_row_content(csv_files):
-    result = parse_csv_files(csv_files)
+    csv_parser = CSVParser()
+
+    result = csv_parser.parse_csv_files(csv_files)
 
     liam_row = next((row for row in result if row["name"] == "Liam Harris"), None)
 

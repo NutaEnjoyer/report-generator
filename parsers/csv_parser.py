@@ -1,5 +1,6 @@
 class CSVParser:
     RATE_COLS = ["rate", "salary", "hourly_rate"]
+
     def _parse_csv_file(self, path: str) -> list[dict[str, str]]:
         all_rows: list[dict[str, str]] = []
         with open(path, "r", encoding="utf-8") as f:
@@ -14,14 +15,12 @@ class CSVParser:
 
         return all_rows
 
-
     def parse_csv_files(self, paths: list[str]) -> list[dict]:
         all_rows: list[dict] = []
         for path in paths:
             all_rows.extend(self._parse_csv_file(path))
 
         return all_rows
-
 
     def _normalize_header(self, header: list[str]) -> list[str]:
         normalized_header: list[str] = []

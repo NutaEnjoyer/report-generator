@@ -20,12 +20,23 @@ def test_main_func_success(monkeypatch):
 
     import main
 
-    monkeypatch.setattr(main, "parse_csv_files", lambda _: [{"name": "Max"}])
-    monkeypatch.setattr(main, "get_report", lambda _: lambda _: "MOCK REPORT")
+    class CSVParserSuccess:
+        def parse_csv_files(self, _):
+            return [{"name": "Max"}]
+
+    class PayoutReportSuccess:
+        def __init__(self, _):
+            pass
+
+        def __str__(self):
+            return "MOCK REPORT"
+
+    monkeypatch.setattr(main, "CSVParser", CSVParserSuccess)
+    monkeypatch.setattr(main, "get_report", lambda _: PayoutReportSuccess)
 
     result = main_func()
 
-    assert result == "MOCK REPORT"
+    assert str(result) == "MOCK REPORT"
 
 
 def test_main_func_error_parsing_csv_files(monkeypatch):
@@ -33,10 +44,11 @@ def test_main_func_error_parsing_csv_files(monkeypatch):
 
     import main
 
-    def raise_parse_error(_):
-        raise Exception("Parsing failed")
+    class CSVParserError:
+        def parse_csv_files(self, _):
+            raise Exception("Parsing failed")
 
-    monkeypatch.setattr(main, "parse_csv_files", raise_parse_error)
+    monkeypatch.setattr(main, "CSVParser", CSVParserError)
 
     with pytest.raises(
         ValueError, match="Error while parsing CSV files: Parsing failed"
@@ -49,14 +61,16 @@ def test_main_func_error_generating_report(monkeypatch):
 
     import main
 
-    def raise_error_get_report(_):
-        def raise_generate_report_error(_):
+    class CSVParserError:
+        def parse_csv_files(self, _):
+            return [{"name": "Max"}]
+
+    class PayoutReportError:
+        def __init__(self, _):
             raise Exception("Error generating report")
 
-        return raise_generate_report_error
-
-    monkeypatch.setattr(main, "parse_csv_files", lambda _: [{"name": "Max"}])
-    monkeypatch.setattr(main, "get_report", raise_error_get_report)
+    monkeypatch.setattr(main, "CSVParser", CSVParserError)
+    monkeypatch.setattr(main, "get_report", lambda _: PayoutReportError)
 
     with pytest.raises(
         ValueError, match="Error while generating report: Error generating report"
@@ -67,9 +81,20 @@ def test_main_func_error_generating_report(monkeypatch):
 def test_main_print(monkeypatch, capsys):
     import main
 
-    monkeypatch.setattr(main, "main_func", lambda: "MOCK REPORT")
+    class PayoutReportSuccess:
+        def __init__(self):
+            pass
+
+        def __str__(self):
+            return "MOCK REPORT"
+
+        def __getattr__(self, name):
+            if name == "json":
+                return "MOCK JSON"
+
+    monkeypatch.setattr(main, "main_func", lambda: PayoutReportSuccess())
 
     result = main.main()
 
-    assert result == None
+    assert result == "MOCK JSON"
     assert "MOCK REPORT" in capsys.readouterr().out

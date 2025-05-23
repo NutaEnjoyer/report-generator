@@ -4,9 +4,9 @@ import json
 from reports.base_report import BaseReport
 
 
-class PayoutReport(BaseReport):    
+class PayoutReport(BaseReport):
     def generate_report(self) -> str:
-        
+
         departments = defaultdict(list)
         report: list[defaultdict] = []
 
@@ -25,12 +25,14 @@ class PayoutReport(BaseReport):
             }
 
             for p in people:
-                department_report["employees"].append({
-                    "name": p["name"],
-                    "hours_worked": int(p["hours_worked"]),
-                    "rate": int(p["rate"]),
-                    "payout": p["payout"]
-                })
+                department_report["employees"].append(
+                    {
+                        "name": p["name"],
+                        "hours_worked": int(p["hours_worked"]),
+                        "rate": int(p["rate"]),
+                        "payout": p["payout"],
+                    }
+                )
                 department_report["total_payout"] += p["payout"]
                 department_report["total_hours"] += int(p["hours_worked"])
 
@@ -55,4 +57,3 @@ class PayoutReport(BaseReport):
             lines.append("")
 
         return "\n".join(lines)
-    
